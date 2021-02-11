@@ -49,14 +49,17 @@
      *         - undefined when setting
      */
     setSrc: function(src) {
-      if (this.flvPlayer) {
-        // Is this necessary to change source?
-        this.flvPlayer.detachMediaElement();
-        this.flvPlayer.destroy();
-      }
-
       const mediaDataSource = this.options_.mediaDataSource;
       const config = this.options_.config;
+
+      if (this.flvPlayer) {
+        // Is this necessary to change source?
+        this.flvPlayer.pause();
+        this.flvPlayer.unload();
+        this.flvPlayer.detachMediaElement();
+        this.flvPlayer.destroy();
+        mediaDataSource.segments = null;
+      }
 
       mediaDataSource.type = mediaDataSource.type === undefined ? 'flv' : mediaDataSource.type;
       mediaDataSource.url = src;
