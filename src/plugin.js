@@ -1,18 +1,24 @@
 /**
  * @file plugin.js
+ * global define
  */
-(function (root, factory) {
-  if (typeof window !== 'undefined' && window.videojs) {
-    factory(window.videojs);
-  } else if (typeof exports==='object' && typeof module!=='undefined') {
-    var videojs = require('video.js');
-    module.exports = factory(videojs.default || videojs);
+/* global define */
+/* eslint-disable object-shorthand */
+(function(root, factory) {
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    if (typeof window !== 'undefined' && window.videojs) {
+      module.exports = factory(window.videojs);
+    } else {
+      const videojs = require('video.js');
+
+      module.exports = factory(videojs.default || videojs);
+    }
   } else if (typeof define === 'function' && define.amd) {
-    define(['videojs'], function(videojs){
+    define(['videojs'], function(videojs) {
       return (root.Flvjs = factory(videojs));
     });
   } else {
-    root.Flvjs = factory(root.videojs);
+    root.Flvjs = factory(window && window.videojs || root.videojs);
   }
 }(this, function(videojs) {
   const Html5 = videojs.getTech('Html5');
@@ -61,7 +67,8 @@
         mediaDataSource.segments = null;
       }
 
-      mediaDataSource.type = mediaDataSource.type === undefined ? 'flv' : mediaDataSource.type;
+      mediaDataSource.type = mediaDataSource.type === undefined ?
+        'flv' : mediaDataSource.type;
       mediaDataSource.url = src;
       this.flvPlayer = window.flvjs.createPlayer(mediaDataSource, config);
       this.flvPlayer.attachMediaElement(this.el_);
@@ -138,4 +145,6 @@
   } else {
     videojs.registerComponent('Flvjs', Flvjs);
   }
+
+  return Flvjs;
 }));
